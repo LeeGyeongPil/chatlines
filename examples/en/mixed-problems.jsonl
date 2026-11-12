@@ -1,0 +1,6 @@
+{"messages": [{"role": "user", "content": "Say hi."}, {"role": "assistant", "content": "Hi there!"}]}
+{"messages": [{"role": "user", "content": "Say hi."}, {"role": "assistant", "content": 
+{"note": "this line is not a chat", "id": 7}
+{"messages": [{"role": "user", "content": "What is the weather in Seoul right now?"}, {"role": "tool", "content": "{\"temp_c\": 20}", "tool_call_id": "call_missing"}, {"role": "assistant", "content": "It is 12 degrees and sunny in Seoul."}]}
+{"id": "batch_req_9", "custom_id": "req-9", "response": {"status_code": 429, "body": {"error": {"message": "The request was rejected by the server."}}}, "error": null}
+{"messages": [{"role": "user", "content": "Say hi."}, {"role": "assistant", "content": "Hi there!"}]}

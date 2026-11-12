@@ -1,0 +1,2 @@
+{"id": "batch_req_req-1", "custom_id": "req-1", "response": {"status_code": 200, "request_id": "r-req-1", "body": {"id": "chatcmpl-req-1", "model": "gpt-4o-mini", "choices": [{"index": 0, "message": {"role": "assistant", "content": "긍정"}, "finish_reason": "stop"}]}}, "error": null}
+{"id": "batch_req_req-2", "custom_id": "req-2", "response": {"status_code": 200, "request_id": "r-req-2", "body": {"id": "chatcmpl-req-2", "model": "gpt-4o-mini", "choices": [{"index": 0, "message": {"role": "assistant", "content": "부정"}, "finish_reason": "stop"}]}}, "error": null}

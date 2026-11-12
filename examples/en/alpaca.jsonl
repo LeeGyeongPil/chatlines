@@ -1,0 +1,3 @@
+{"instruction": "Fix the spelling of the sentence.", "input": "Thiss is a tset.", "output": "This is a test."}
+{"instruction": "Name the capital of France.", "input": "", "output": "The capital of France is Paris."}
+{"instruction": "Write a one-line greeting for a new teammate.", "input": "", "output": "Welcome to the team, we are glad you are here!"}

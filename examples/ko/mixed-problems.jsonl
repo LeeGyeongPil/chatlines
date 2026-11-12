@@ -1,0 +1,6 @@
+{"messages": [{"role": "user", "content": "인사해 줘."}, {"role": "assistant", "content": "안녕하세요!"}]}
+{"messages": [{"role": "user", "content": "인사해 줘."}, {"role": "assistant", "content": 
+{"note": "이 줄은 채팅이 아닙니다", "id": 7}
+{"messages": [{"role": "user", "content": "지금 서울 날씨가 어때?"}, {"role": "tool", "content": "{\"temp_c\": 20}", "tool_call_id": "call_missing"}, {"role": "assistant", "content": "서울은 지금 맑고 12도입니다."}]}
+{"id": "batch_req_9", "custom_id": "req-9", "response": {"status_code": 429, "body": {"error": {"message": "서버가 요청을 거부했습니다."}}}, "error": null}
+{"messages": [{"role": "user", "content": "인사해 줘."}, {"role": "assistant", "content": "안녕하세요!"}]}

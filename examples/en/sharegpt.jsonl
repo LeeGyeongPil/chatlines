@@ -1,0 +1,2 @@
+{"conversations": [{"from": "human", "value": "Translate 'good morning' to French."}, {"from": "gpt", "value": "Bonjour."}]}
+{"conversations": [{"from": "human", "value": "What is the weather in Busan?"}, {"from": "function_call", "value": "{\"name\": \"get_weather\", \"arguments\": {\"city\": \"Busan\"}}"}, {"from": "observation", "value": "{\"city\": \"Busan\", \"temp_c\": 15}"}, {"from": "gpt", "value": "It is 15 degrees in Busan."}], "system": "You are a concise assistant."}

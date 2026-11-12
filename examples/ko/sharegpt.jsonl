@@ -1,0 +1,2 @@
+{"conversations": [{"from": "human", "value": "'좋은 아침'을 프랑스어로 번역해 줘."}, {"from": "gpt", "value": "Bonjour."}]}
+{"conversations": [{"from": "human", "value": "부산 날씨는 어때?"}, {"from": "function_call", "value": "{\"name\": \"get_weather\", \"arguments\": {\"city\": \"부산\"}}"}, {"from": "observation", "value": "{\"city\": \"부산\", \"temp_c\": 15}"}, {"from": "gpt", "value": "부산은 15도입니다."}], "system": "당신은 간결하게 답하는 도우미입니다."}

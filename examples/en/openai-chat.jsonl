@@ -1,0 +1,3 @@
+{"messages": [{"role": "system", "content": "You are a concise assistant."}, {"role": "user", "content": "Say hello in one short sentence."}, {"role": "assistant", "content": "Hello! How can I help you today?"}]}
+{"messages": [{"role": "user", "content": "Summarize: The meeting moved from Monday to Wednesday because two people are away."}, {"role": "assistant", "content": "The meeting is now on Wednesday because two people are away on Monday.", "weight": 1}]}
+{"messages": [{"role": "user", "content": [{"type": "text", "text": "Name three primary colors."}]}, {"role": "assistant", "content": "Red, blue and yellow."}]}
