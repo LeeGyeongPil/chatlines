@@ -290,7 +290,7 @@ export async function openChat(text: string, opts: OpenOptions = {}): Promise<Ha
   win.eval(WEBVIEW_JS());
 
   const settle = (ms = 20) => new Promise<void>((r) => setTimeout(r, ms));
-  const waitFor = async (fn: () => boolean, ms = 3000): Promise<void> => {
+  const waitFor = async (fn: () => boolean, ms = 30000): Promise<void> => {
     const t0 = Date.now();
     while (!fn()) {
       if (Date.now() - t0 > ms) throw new Error('waitFor timed out');

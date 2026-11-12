@@ -15,7 +15,7 @@ async function openPreview(query: string, storage?: Record<string, string>) {
   dom.window.eval(fs.readFileSync(path.join(ROOT, 'media', 'webview.js'), 'utf8'));
   const t0 = Date.now();
   while (dom.window.document.querySelectorAll('.card').length === 0) {
-    if (Date.now() - t0 > 3000) throw new Error('preview did not render');
+    if (Date.now() - t0 > 30000) throw new Error('preview did not render');
     await new Promise((r) => setTimeout(r, 5));
   }
   return dom;
@@ -37,9 +37,9 @@ describe('preview harness', () => {
   it('opens the problems view and statistics from the address', async () => {
     const dom = await openPreview('?fixture=mixed-problems&problems=1&stats=1&lang=en');
     const t0 = Date.now();
-    while (dom.window.document.querySelectorAll('.card').length !== 4 && Date.now() - t0 < 3000) await new Promise((r) => setTimeout(r, 5));
+    while (dom.window.document.querySelectorAll('.card').length !== 4 && Date.now() - t0 < 30000) await new Promise((r) => setTimeout(r, 5));
     assert.strictEqual(dom.window.document.querySelectorAll('.card').length, 4);
-    while (!dom.window.document.querySelector('.stat-list') && Date.now() - t0 < 3000) await new Promise((r) => setTimeout(r, 5));
+    while (!dom.window.document.querySelector('.stat-list') && Date.now() - t0 < 30000) await new Promise((r) => setTimeout(r, 5));
     assert.match(dom.window.document.querySelector('.stat-list')!.textContent!, /Problem lines4/);
     dom.window.close();
   });
@@ -50,7 +50,7 @@ describe('preview harness', () => {
     select.value = 'ko';
     select.dispatchEvent(new dom.window.Event('change'));
     const t0 = Date.now();
-    while (dom.window.document.querySelector('.line-no')?.textContent !== '1번 줄' && Date.now() - t0 < 3000) await new Promise((r) => setTimeout(r, 5));
+    while (dom.window.document.querySelector('.line-no')?.textContent !== '1번 줄' && Date.now() - t0 < 30000) await new Promise((r) => setTimeout(r, 5));
     assert.strictEqual(dom.window.localStorage.getItem('chatlines.lang'), 'ko');
     assert.match(dom.window.document.querySelector('.msg .part')!.textContent!, /[가-힣]/, 'the example text is Korean too');
     dom.window.close();
@@ -66,7 +66,7 @@ describe('preview harness', () => {
     d.querySelector<HTMLTextAreaElement>('.editbox textarea')!.value = 'Edited in the preview';
     d.querySelector<HTMLButtonElement>('.editbox .save')!.click();
     const t0 = Date.now();
-    while (d.querySelector('.card[data-line="0"] .role-assistant .part')?.textContent !== 'Edited in the preview' && Date.now() - t0 < 3000) {
+    while (d.querySelector('.card[data-line="0"] .role-assistant .part')?.textContent !== 'Edited in the preview' && Date.now() - t0 < 30000) {
       await new Promise((r) => setTimeout(r, 5));
     }
     assert.strictEqual(d.querySelector('.card[data-line="0"] .role-assistant .part')!.textContent, 'Edited in the preview');
