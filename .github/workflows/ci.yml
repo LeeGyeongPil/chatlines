@@ -16,7 +16,9 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - name: Show toolchain versions
+        run: node -v && npm -v && git status --short
+      - run: npm ci --no-audit --no-fund --loglevel=http
       - run: npm test
       - run: npm run bench
       - run: npm run package
@@ -28,3 +30,9 @@ jobs:
           grep -q "package.nls.ko.json" vsce-ls.txt
           if grep -qE "^(src|test|out|examples)/" vsce-ls.txt; then echo "unexpected files in the package"; exit 1; fi
       - run: npm run preview
+      - name: Diagnostics on failure
+        if: failure()
+        run: |
+          node -v; npm -v
+          ls -la
+          tail -n 80 ~/.npm/_logs/*.log || true
