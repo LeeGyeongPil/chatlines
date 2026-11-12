@@ -5,6 +5,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-12
+
+### Security
+- Build-time dependency `minimatch` is forced to the patched range `^11.0.8` via npm `overrides` (resolves to 11.0.8) to address GHSA-g3hv-75wg-m249. It is used only by the packaging tool; the published extension does not include it.
+
 ## [0.1.0] - 2026-11-12
 
 ### Added

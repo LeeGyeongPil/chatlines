@@ -37,7 +37,7 @@ git clone https://github.com/LeeGyeongPil/chatlines.git
 cd chatlines
 npm ci
 npm run package
-code --install-extension chatlines-0.1.0.vsix
+code --install-extension chatlines-0.1.1.vsix
 ```
 
 npm 11에서는 `npm ci` 중 `esbuild`, `@vscode/vsce-sign`에 대해 "install-scripts not yet covered by allowScripts" 경고가 나올 수 있습니다. 무시해도 됩니다. 빌드와 패키징에 그 스크립트는 필요하지 않습니다.
@@ -45,7 +45,7 @@ npm 11에서는 `npm ci` 중 `esbuild`, `@vscode/vsce-sign`에 대해 "install-s
 `npm run package`의 마지막 줄은 다음과 같습니다.
 
 ```
- DONE  Packaged: .../chatlines-0.1.0.vsix
+ DONE  Packaged: .../chatlines-0.1.1.vsix
 ```
 
 `code` 명령이 없으면 VS Code 명령 팔레트의 "Extensions: Install from VSIX..."를 쓰세요.

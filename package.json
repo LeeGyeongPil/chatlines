@@ -2,7 +2,7 @@
   "name": "chatlines",
   "displayName": "chatlines",
   "description": "%description%",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "chatlines",
   "license": "MIT",
   "repository": {
@@ -114,6 +114,9 @@
     "demo:edit": "npm run --silent build:ts && node scripts/demo-edit.mjs",
     "preview": "npm run build && node scripts/make-preview.mjs",
     "package": "npm run build && vsce package --no-dependencies --allow-missing-repository"
+  },
+  "overrides": {
+    "minimatch": "^11.0.8"
   },
   "devDependencies": {
     "@types/jsdom": "30.0.0",
