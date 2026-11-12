@@ -1,0 +1,86 @@
+[
+  {
+    "style": "ascii-default",
+    "before": "{\"messages\": [{\"role\": \"user\", \"content\": \"\\uc11c\\uc6b8 \\ub0a0\\uc528\\ub294? \\u2600 / \\uc548\\ub155\"}, {\"role\": \"assistant\", \"content\": null, \"tool_calls\": [{\"id\": \"call_1\", \"type\": \"function\", \"function\": {\"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\": \\\"Seoul\\\"}\"}}]}, {\"role\": \"tool\", \"content\": \"old\", \"tool_call_id\": \"call_1\"}], \"weight\": 1.0}",
+    "textPath": [
+      "messages",
+      2,
+      "content"
+    ],
+    "newText": "12°C, 서울 🌤",
+    "afterText": "{\"messages\": [{\"role\": \"user\", \"content\": \"\\uc11c\\uc6b8 \\ub0a0\\uc528\\ub294? \\u2600 / \\uc548\\ub155\"}, {\"role\": \"assistant\", \"content\": null, \"tool_calls\": [{\"id\": \"call_1\", \"type\": \"function\", \"function\": {\"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\": \\\"Seoul\\\"}\"}}]}, {\"role\": \"tool\", \"content\": \"12\\u00b0C, \\uc11c\\uc6b8 \\ud83c\\udf24\", \"tool_call_id\": \"call_1\"}], \"weight\": 1.0}",
+    "argsPath": [
+      "messages",
+      1,
+      "tool_calls",
+      0,
+      "function",
+      "arguments"
+    ],
+    "newArgs": "{\"city\":\"Busan\",\"unit\":\"C\"}",
+    "afterArgs": "{\"messages\": [{\"role\": \"user\", \"content\": \"\\uc11c\\uc6b8 \\ub0a0\\uc528\\ub294? \\u2600 / \\uc548\\ub155\"}, {\"role\": \"assistant\", \"content\": null, \"tool_calls\": [{\"id\": \"call_1\", \"type\": \"function\", \"function\": {\"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\": \\\"Busan\\\", \\\"unit\\\": \\\"C\\\"}\"}}]}, {\"role\": \"tool\", \"content\": \"old\", \"tool_call_id\": \"call_1\"}], \"weight\": 1.0}"
+  },
+  {
+    "style": "utf8-default",
+    "before": "{\"messages\": [{\"role\": \"user\", \"content\": \"서울 날씨는? ☀ / 안녕\"}, {\"role\": \"assistant\", \"content\": null, \"tool_calls\": [{\"id\": \"call_1\", \"type\": \"function\", \"function\": {\"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\": \\\"Seoul\\\"}\"}}]}, {\"role\": \"tool\", \"content\": \"old\", \"tool_call_id\": \"call_1\"}], \"weight\": 1.0}",
+    "textPath": [
+      "messages",
+      2,
+      "content"
+    ],
+    "newText": "12°C, 서울 🌤",
+    "afterText": "{\"messages\": [{\"role\": \"user\", \"content\": \"서울 날씨는? ☀ / 안녕\"}, {\"role\": \"assistant\", \"content\": null, \"tool_calls\": [{\"id\": \"call_1\", \"type\": \"function\", \"function\": {\"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\": \\\"Seoul\\\"}\"}}]}, {\"role\": \"tool\", \"content\": \"12°C, 서울 🌤\", \"tool_call_id\": \"call_1\"}], \"weight\": 1.0}",
+    "argsPath": [
+      "messages",
+      1,
+      "tool_calls",
+      0,
+      "function",
+      "arguments"
+    ],
+    "newArgs": "{\"city\":\"Busan\",\"unit\":\"C\"}",
+    "afterArgs": "{\"messages\": [{\"role\": \"user\", \"content\": \"서울 날씨는? ☀ / 안녕\"}, {\"role\": \"assistant\", \"content\": null, \"tool_calls\": [{\"id\": \"call_1\", \"type\": \"function\", \"function\": {\"name\": \"get_weather\", \"arguments\": \"{\\\"city\\\": \\\"Busan\\\", \\\"unit\\\": \\\"C\\\"}\"}}]}, {\"role\": \"tool\", \"content\": \"old\", \"tool_call_id\": \"call_1\"}], \"weight\": 1.0}"
+  },
+  {
+    "style": "ascii-compact",
+    "before": "{\"messages\":[{\"role\":\"user\",\"content\":\"\\uc11c\\uc6b8 \\ub0a0\\uc528\\ub294? \\u2600 / \\uc548\\ub155\"},{\"role\":\"assistant\",\"content\":null,\"tool_calls\":[{\"id\":\"call_1\",\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Seoul\\\"}\"}}]},{\"role\":\"tool\",\"content\":\"old\",\"tool_call_id\":\"call_1\"}],\"weight\":1.0}",
+    "textPath": [
+      "messages",
+      2,
+      "content"
+    ],
+    "newText": "12°C, 서울 🌤",
+    "afterText": "{\"messages\":[{\"role\":\"user\",\"content\":\"\\uc11c\\uc6b8 \\ub0a0\\uc528\\ub294? \\u2600 / \\uc548\\ub155\"},{\"role\":\"assistant\",\"content\":null,\"tool_calls\":[{\"id\":\"call_1\",\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Seoul\\\"}\"}}]},{\"role\":\"tool\",\"content\":\"12\\u00b0C, \\uc11c\\uc6b8 \\ud83c\\udf24\",\"tool_call_id\":\"call_1\"}],\"weight\":1.0}",
+    "argsPath": [
+      "messages",
+      1,
+      "tool_calls",
+      0,
+      "function",
+      "arguments"
+    ],
+    "newArgs": "{\"city\":\"Busan\",\"unit\":\"C\"}",
+    "afterArgs": "{\"messages\":[{\"role\":\"user\",\"content\":\"\\uc11c\\uc6b8 \\ub0a0\\uc528\\ub294? \\u2600 / \\uc548\\ub155\"},{\"role\":\"assistant\",\"content\":null,\"tool_calls\":[{\"id\":\"call_1\",\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Busan\\\",\\\"unit\\\":\\\"C\\\"}\"}}]},{\"role\":\"tool\",\"content\":\"old\",\"tool_call_id\":\"call_1\"}],\"weight\":1.0}"
+  },
+  {
+    "style": "utf8-compact",
+    "before": "{\"messages\":[{\"role\":\"user\",\"content\":\"서울 날씨는? ☀ / 안녕\"},{\"role\":\"assistant\",\"content\":null,\"tool_calls\":[{\"id\":\"call_1\",\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Seoul\\\"}\"}}]},{\"role\":\"tool\",\"content\":\"old\",\"tool_call_id\":\"call_1\"}],\"weight\":1.0}",
+    "textPath": [
+      "messages",
+      2,
+      "content"
+    ],
+    "newText": "12°C, 서울 🌤",
+    "afterText": "{\"messages\":[{\"role\":\"user\",\"content\":\"서울 날씨는? ☀ / 안녕\"},{\"role\":\"assistant\",\"content\":null,\"tool_calls\":[{\"id\":\"call_1\",\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Seoul\\\"}\"}}]},{\"role\":\"tool\",\"content\":\"12°C, 서울 🌤\",\"tool_call_id\":\"call_1\"}],\"weight\":1.0}",
+    "argsPath": [
+      "messages",
+      1,
+      "tool_calls",
+      0,
+      "function",
+      "arguments"
+    ],
+    "newArgs": "{\"city\":\"Busan\",\"unit\":\"C\"}",
+    "afterArgs": "{\"messages\":[{\"role\":\"user\",\"content\":\"서울 날씨는? ☀ / 안녕\"},{\"role\":\"assistant\",\"content\":null,\"tool_calls\":[{\"id\":\"call_1\",\"type\":\"function\",\"function\":{\"name\":\"get_weather\",\"arguments\":\"{\\\"city\\\":\\\"Busan\\\",\\\"unit\\\":\\\"C\\\"}\"}}]},{\"role\":\"tool\",\"content\":\"old\",\"tool_call_id\":\"call_1\"}],\"weight\":1.0}"
+  }
+]

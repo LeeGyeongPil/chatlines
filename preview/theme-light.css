@@ -1,0 +1,13 @@
+:root {
+  --vscode-editor-background: #ffffff; --vscode-editor-foreground: #333333;
+  --vscode-font-family: -apple-system, "Segoe UI", system-ui, sans-serif; --vscode-font-size: 13px;
+  --vscode-editor-font-family: Menlo, Consolas, monospace;
+  --vscode-panel-border: #d4d4d4; --vscode-textBlockQuote-background: #f3f3f3;
+  --vscode-input-background: #ffffff; --vscode-input-foreground: #616161; --vscode-input-border: #c8c8c8;
+  --vscode-button-background: #007acc; --vscode-button-foreground: #ffffff;
+  --vscode-button-secondaryBackground: #e4e4e4; --vscode-button-secondaryForeground: #333333; --vscode-button-secondaryHoverBackground: #d4d4d4;
+  --vscode-badge-background: #c4c4c4; --vscode-badge-foreground: #333333;
+  --vscode-textLink-foreground: #006ab1; --vscode-focusBorder: #0090f1; --vscode-errorForeground: #a1260d;
+  --vscode-inputValidation-errorBackground: #f2dede; --vscode-inputValidation-errorBorder: #be1100;
+  --vscode-inputValidation-warningBackground: #f6f5d2; --vscode-editorWarning-foreground: #bf8803;
+}
