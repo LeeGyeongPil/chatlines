@@ -49,9 +49,15 @@ describe('preview harness', () => {
     const select = dom.window.document.querySelector<HTMLSelectElement>('.lang-select')!;
     select.value = 'ko';
     select.dispatchEvent(new dom.window.Event('change'));
+    // The preview host sends the Korean labels ('strings') and the Korean example ('page') as two
+    // separate messages. On a slow runner the poll can land between them and see Korean labels over
+    // the English example, so wait until BOTH have changed before checking.
+    const labelIsKorean = () => dom.window.document.querySelector('.line-no')?.textContent === '1번 줄';
+    const textIsKorean = () => /[가-힣]/.test(dom.window.document.querySelector('.msg .part')?.textContent ?? '');
     const t0 = Date.now();
-    while (dom.window.document.querySelector('.line-no')?.textContent !== '1번 줄' && Date.now() - t0 < 30000) await new Promise((r) => setTimeout(r, 5));
+    while (!(labelIsKorean() && textIsKorean()) && Date.now() - t0 < 30000) await new Promise((r) => setTimeout(r, 5));
     assert.strictEqual(dom.window.localStorage.getItem('chatlines.lang'), 'ko');
+    assert.strictEqual(dom.window.document.querySelector('.line-no')!.textContent, '1번 줄');
     assert.match(dom.window.document.querySelector('.msg .part')!.textContent!, /[가-힣]/, 'the example text is Korean too');
     dom.window.close();
     const again = await openPreview('?fixture=openai-chat', { 'chatlines.lang': 'ko' });
