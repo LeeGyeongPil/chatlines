@@ -1,0 +1,128 @@
+{
+  "name": "chatlines",
+  "displayName": "chatlines",
+  "description": "%description%",
+  "version": "0.1.0",
+  "publisher": "chatlines",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LeeGyeongPil/chatlines.git"
+  },
+  "homepage": "https://github.com/LeeGyeongPil/chatlines#readme",
+  "bugs": {
+    "url": "https://github.com/LeeGyeongPil/chatlines/issues"
+  },
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
+  "private": true,
+  "categories": [
+    "Data Science",
+    "Visualization",
+    "Other"
+  ],
+  "keywords": [
+    "jsonl",
+    "chat",
+    "fine-tuning",
+    "openai",
+    "tool calls",
+    "dataset"
+  ],
+  "engines": {
+    "vscode": "^1.90.0",
+    "node": ">=22"
+  },
+  "main": "./dist/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "chatlines.chatView",
+        "displayName": "%editor.displayName%",
+        "selector": [
+          {
+            "filenamePattern": "*.jsonl"
+          }
+        ],
+        "priority": "option"
+      }
+    ],
+    "commands": [
+      {
+        "command": "chatlines.openAsChat",
+        "title": "%cmd.openAsChat%"
+      },
+      {
+        "command": "chatlines.openLineAsText",
+        "title": "%cmd.openLineAsText%"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "chatlines.openAsChat",
+          "when": "resourceExtname == .jsonl",
+          "group": "navigation"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "chatlines.openAsChat",
+          "when": "resourceExtname == .jsonl && activeCustomEditorId != chatlines.chatView",
+          "group": "navigation"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "chatlines.openLineAsText",
+          "when": "false"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "chatlines",
+      "properties": {
+        "chatlines.language": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "en",
+            "ko"
+          ],
+          "default": "auto",
+          "description": "%config.language%"
+        },
+        "chatlines.pageSize": {
+          "type": "number",
+          "default": 50,
+          "minimum": 10,
+          "maximum": 200,
+          "description": "%config.pageSize%"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build:ts": "tsc -p tsconfig.json && tsc -p tsconfig.webview.json",
+    "build": "npm run build:ts && node esbuild.mjs",
+    "test": "npm run build && node --test \"out/test/**/*.test.js\"",
+    "test:integration": "npm run build && node test/integration/run.cjs",
+    "bench": "npm run build && node scripts/bench.mjs",
+    "demo:edit": "npm run --silent build:ts && node scripts/demo-edit.mjs",
+    "preview": "npm run build && node scripts/make-preview.mjs",
+    "package": "npm run build && vsce package --no-dependencies --allow-missing-repository"
+  },
+  "devDependencies": {
+    "@types/jsdom": "30.0.0",
+    "@types/node": "20.19.43",
+    "@types/vscode": "1.90.0",
+    "@vscode/test-electron": "3.1.0",
+    "@vscode/vsce": "4.1.0",
+    "esbuild": "0.28.2",
+    "jsdom": "31.0.0",
+    "typescript": "5.9.3"
+  }
+}

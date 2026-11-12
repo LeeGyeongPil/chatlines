@@ -1,0 +1,8 @@
+{
+  "description": "Read chat-format JSONL (OpenAI, ShareGPT, Alpaca, batch files) as conversations and fix one message without rewriting the line.",
+  "editor.displayName": "Chat view",
+  "cmd.openAsChat": "chatlines: Open as Chat",
+  "cmd.openLineAsText": "chatlines: Open Line as Text",
+  "config.language": "Language of the chat view: auto follows the VS Code display language.",
+  "config.pageSize": "Number of JSONL lines shown per page in the chat view."
+}
