@@ -1,0 +1,29 @@
+# No keys, no network at run time: the tests use a stand-in for the VS Code API plus jsdom.
+name: ci
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "17 3 * * 1"   # every Monday, to notice dependency or runtime changes
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run bench
+      - run: npm run package
+      - name: Check the package contents
+        run: |
+          npx vsce ls --no-dependencies > vsce-ls.txt
+          grep -q "dist/extension.js" vsce-ls.txt
+          grep -q "media/webview.js" vsce-ls.txt
+          grep -q "package.nls.ko.json" vsce-ls.txt
+          if grep -qE "^(src|test|out|examples)/" vsce-ls.txt; then echo "unexpected files in the package"; exit 1; fi
+      - run: npm run preview
