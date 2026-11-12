@@ -5,6 +5,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-11-12
+
+### Fixed
+- Flaky preview language-switch test: it now waits until both the labels and the sample text are Korean before asserting.
+
+### Changed
+- CI prints toolchain versions and collects failure diagnostics.
+
 ## [0.1.1] - 2026-11-12
 
 ### Security
