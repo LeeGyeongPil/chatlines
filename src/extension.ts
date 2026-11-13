@@ -18,7 +18,8 @@ export function activate(context: vscode.ExtensionContext): void {
       webviewOptions: { retainContextWhenHidden: false },
     }),
     vscode.commands.registerCommand('chatlines.openAsChat', async (resource?: vscode.Uri) => {
-      const uri = resource ?? vscode.window.activeTextEditor?.document.uri;
+      const editor = resource ? undefined : vscode.window.activeTextEditor;
+      const uri = resource ?? editor?.document.uri;
       if (!uri) {
         void vscode.window.showErrorMessage(t(currentLanguage(), 'error.noFile'));
         return;
@@ -30,7 +31,14 @@ export function activate(context: vscode.ExtensionContext): void {
         void vscode.window.showErrorMessage(t(currentLanguage(), 'error.tooLarge', MAX_SYNCED_FILE_MB));
         return;
       }
-      await vscode.commands.executeCommand('vscode.openWith', uri, VIEW_TYPE);
+      // Opened from a text editor: start at the cursor line. Explorer and title menus pass a resource.
+      if (editor) provider.openAtLine(uri, editor.selection.active.line);
+      try {
+        await vscode.commands.executeCommand('vscode.openWith', uri, VIEW_TYPE);
+      } catch (e) {
+        provider.cancelOpenAtLine(uri);
+        throw e;
+      }
     }),
     vscode.commands.registerCommand('chatlines.openLineAsText', async (uri: vscode.Uri, line: number) => {
       const doc = await vscode.workspace.openTextDocument(uri);

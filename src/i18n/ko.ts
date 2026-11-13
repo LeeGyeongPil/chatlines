@@ -17,6 +17,8 @@ export const ko: Record<MessageKey, string> = {
   'label.previous': '이전',
   'label.next': '다음',
   'label.page': '{0} / {1}쪽',
+  'label.gotoLine': '줄로 이동',
+  'label.gotoLinePlaceholder': '줄로 이동…',
   'label.matches': '일치하는 줄 {0}개',
   // 카드
   'label.line': '{0}번 줄',
@@ -56,6 +58,9 @@ export const ko: Record<MessageKey, string> = {
   'msg.truncated': '앞의 {0}자만 보여 드립니다.',
   'msg.editHint': 'Ctrl+Enter로 적용하고 Esc로 취소합니다.',
   'msg.argsInvalid': '인자가 올바른 JSON이 아닙니다.',
+  'msg.lineNotNumber': '1 이상의 줄 번호를 입력해야 합니다.',
+  'msg.lineOutOfRange': '{0}번 줄이 없습니다. 이 파일은 {1}줄입니다.',
+  'msg.lineNotInFilter': '{0}번 줄은 필터 결과에 없습니다. 필터를 해제해야 볼 수 있습니다.',
   'msg.readOnlyPart': '이 부분은 여기서 편집할 수 없습니다.',
   // 데이터 문제
   'data.invalidJson': '{0}번 줄은 올바른 JSON이 아닙니다. 문제가 시작되는 열은 {1}입니다.',

@@ -114,3 +114,6 @@ button, select, input, textarea { font: inherit; color: inherit; }
 .edit-error { color: var(--vscode-errorForeground, #f48771); min-height: 0; }
 .edit-buttons { display: flex; gap: 6px; }
 .empty, .scanning { opacity: 0.8; }
+
+.card.focused { outline: 2px solid var(--vscode-focusBorder, #3794ff); outline-offset: 2px; }
+.goto-line { width: 9em; }

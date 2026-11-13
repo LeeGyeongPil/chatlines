@@ -25,6 +25,8 @@ interface ErrorBanner {
   messageKey: string;
   args: Array<string | number>;
   line?: number;
+  /** A hint about the user's own request (line jump); it gets no "Open as Text" button. */
+  notice?: boolean;
 }
 
 const api = acquireVsCodeApi();
@@ -50,6 +52,7 @@ let lines: PageLine[] = [];
 let stats: Stats | null = null;
 let banner: ErrorBanner | null = null;
 let loaded = false;
+let focusLine: number | null = null;
 const editors = new Map<number, { handle: EditorHandle; close: () => void }>();
 
 const tr = (key: string, ...args: Array<string | number>): string => format(strings[key] ?? key, args);
@@ -85,6 +88,7 @@ let searchInput: HTMLInputElement;
 let problemsBox: HTMLInputElement;
 let prevBtn: HTMLButtonElement;
 let nextBtn: HTMLButtonElement;
+let gotoInput: HTMLInputElement;
 let pageLabel: HTMLElement;
 let matchLabel: HTMLElement;
 
@@ -103,6 +107,20 @@ function requestPage(n: number): void {
   ui.page = n;
   save();
   post({ type: 'requestPage', page: n, filter: currentFilter() });
+}
+
+/** The one place where the 1-based number the user types becomes the 0-based protocol line. */
+function requestLine(text: string): void {
+  const trimmed = text.trim();
+  const n = /^\d+$/.test(trimmed) ? Number(trimmed) : 0;
+  if (!Number.isSafeInteger(n) || n < 1) {
+    banner = { messageKey: 'msg.lineNotNumber', args: [], notice: true };
+    renderBanner();
+    return;
+  }
+  banner = null;
+  renderBanner();
+  post({ type: 'requestLine', line: n - 1, filter: currentFilter() });
 }
 
 function filterChanged(): void {
@@ -150,6 +168,16 @@ function buildToolbar(): void {
     clearTimeout(timer);
     ui.query = searchInput.value;
     filterChanged();
+  });
+
+  gotoInput = el('input', 'goto-line', undefined, {
+    type: 'text',
+    inputmode: 'numeric',
+    placeholder: tr('label.gotoLinePlaceholder'),
+    'aria-label': tr('label.gotoLine'),
+  });
+  gotoInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') requestLine(gotoInput.value);
   });
 
   roleSelect = el('select', 'role-select', undefined, { 'aria-label': tr('label.role') });
@@ -202,7 +230,7 @@ function buildToolbar(): void {
   matchLabel = el('span', 'match-label');
 
   const filters = el('div', 'tb-group');
-  filters.append(searchInput, roleSelect, toolSelect, problemsLabel, statsBtn);
+  filters.append(searchInput, gotoInput, roleSelect, toolSelect, problemsLabel, statsBtn);
   const pager = el('div', 'tb-group pager');
   pager.append(prevBtn, pageLabel, nextBtn, matchLabel, langSelect);
   toolbar.append(filters, pager);
@@ -240,10 +268,12 @@ function renderBanner(): void {
   if (!banner) return;
   const box = el('div', 'tool-error', undefined, { role: 'alert' });
   box.append(el('span', 'tool-error-text', tr(banner.messageKey, ...banner.args)));
-  const open = el('button', 'btn', tr('label.openAsText'), { type: 'button' });
-  const line = banner.line ?? 0;
-  open.addEventListener('click', () => post({ type: 'openAsText', line }));
-  box.append(open);
+  if (!banner.notice) {
+    const open = el('button', 'btn', tr('label.openAsText'), { type: 'button' });
+    const line = banner.line ?? 0;
+    open.addEventListener('click', () => post({ type: 'openAsText', line }));
+    box.append(open);
+  }
   bannerSlot.append(box);
 }
 
@@ -285,6 +315,16 @@ function renderPage(): void {
     return;
   }
   for (const pl of lines) cardsBox.append(renderCard(ctx, pl));
+  if (focusLine !== null) {
+    const card = cardsBox.querySelector<HTMLElement>(`[data-line="${focusLine}"]`);
+    focusLine = null;
+    if (card) {
+      card.classList.add('focused');
+      card.setAttribute('tabindex', '-1');
+      if (typeof card.scrollIntoView === 'function') card.scrollIntoView({ block: 'center' });
+      card.focus();
+    }
+  }
 }
 
 function lineFilterActive(): boolean {
@@ -302,8 +342,12 @@ window.addEventListener('message', (event: MessageEvent<HostToWebview>) => {
       docVersion = msg.docVersion;
       loaded = true;
       buildToolbar();
-      // Restore the page and filters this view had before it was hidden.
-      if (ui.page !== 0 || lineFilterActive()) post({ type: 'requestPage', page: ui.page, filter: currentFilter() });
+      if (msg.jump) {
+        // The host opens the page of a requested line: drop the old page and filters so the screen matches it.
+        Object.assign(ui, { page: 0, role: '', toolName: '', query: '', problemsOnly: false });
+        save();
+        buildToolbar();
+      } else if (ui.page !== 0 || lineFilterActive()) post({ type: 'requestPage', page: ui.page, filter: currentFilter() });
       break;
     case 'page':
       if (!loaded) return;
@@ -312,6 +356,7 @@ window.addEventListener('message', (event: MessageEvent<HostToWebview>) => {
       totalPages = msg.totalPages;
       matchCount = msg.matchCount;
       lines = msg.lines;
+      focusLine = msg.focusLine ?? null;
       ui.page = page;
       save();
       updateToolbar();
@@ -354,7 +399,7 @@ window.addEventListener('message', (event: MessageEvent<HostToWebview>) => {
       break;
     }
     case 'toolError':
-      banner = { messageKey: msg.messageKey, args: msg.args, line: msg.line };
+      banner = { messageKey: msg.messageKey, args: msg.args, line: msg.line, notice: msg.code === 'LINE_NOTICE' };
       if (loaded) renderBanner();
       break;
     case 'strings':

@@ -23,6 +23,8 @@ export async function openLineAsText(document: vscode.TextDocument, line: number
 
 export class ChatlinesEditorProvider implements vscode.CustomTextEditorProvider {
   private readonly sessions = new Set<Session>();
+  private readonly byUri = new Map<string, { session: Session; panel: vscode.WebviewPanel }>();
+  private readonly pendingLine = new Map<string, number>();
 
   constructor(
     private readonly context: vscode.ExtensionContext,
@@ -34,8 +36,30 @@ export class ChatlinesEditorProvider implements vscode.CustomTextEditorProvider 
     for (const s of this.sessions) s.sendStrings();
   }
 
+  /**
+   * Remember the line (0-based) a file's chat view should open at. A view that is already open
+   * jumps right away; otherwise the line is used once, when the next view of that file starts.
+   */
+  openAtLine(uri: vscode.Uri, line: number): void {
+    const key = uri.toString();
+    const open = this.byUri.get(key);
+    if (open && open.panel.visible) {
+      open.session.goToLine(line);
+      return;
+    }
+    // Not open, or open but hidden (its page would be dropped): keep the line for the next ready.
+    this.pendingLine.set(key, line);
+    if (open) open.panel.reveal();
+  }
+
+  /** Forget a remembered line (the chat view could not be opened). */
+  cancelOpenAtLine(uri: vscode.Uri): void {
+    this.pendingLine.delete(uri.toString());
+  }
+
   async resolveCustomTextEditor(document: vscode.TextDocument, panel: vscode.WebviewPanel): Promise<void> {
     const webview = panel.webview;
+    const key = document.uri.toString();
     const media = vscode.Uri.joinPath(this.context.extensionUri, 'media');
     webview.options = { enableScripts: true, localResourceRoots: [media] };
     webview.html = buildHtml({
@@ -58,7 +82,10 @@ export class ChatlinesEditorProvider implements vscode.CustomTextEditorProvider 
         lineText: (i) => document.lineAt(i).text,
       },
       post: (msg) => {
-        void webview.postMessage(msg);
+        void Promise.resolve(webview.postMessage(msg)).then((delivered) => {
+          // A jump the hidden view never received is kept for when it shows again.
+          if (delivered === false && msg.type === 'page' && msg.focusLine !== undefined) this.pendingLine.set(key, msg.focusLine);
+        });
       },
       replaceLine: async (line, newText) => {
         const edit = new vscode.WorkspaceEdit();
@@ -74,9 +101,15 @@ export class ChatlinesEditorProvider implements vscode.CustomTextEditorProvider 
       openAsText: (line) => {
         void openLineAsText(document, line);
       },
+      takeInitialLine: () => {
+        const line = this.pendingLine.get(key);
+        this.pendingLine.delete(key);
+        return line;
+      },
       log: this.log,
     });
     this.sessions.add(session);
+    this.byUri.set(key, { session, panel });
 
     const subs: vscode.Disposable[] = [];
     subs.push(webview.onDidReceiveMessage((m: WebviewToHost) => void session.handle(m)));
@@ -94,6 +127,7 @@ export class ChatlinesEditorProvider implements vscode.CustomTextEditorProvider 
     panel.onDidDispose(() => {
       session.dispose();
       this.sessions.delete(session);
+      if (this.byUri.get(key)?.session === session) this.byUri.delete(key);
       for (const d of subs) d.dispose();
     });
   }

@@ -26,6 +26,8 @@ export interface SessionBackend {
   setLanguage(lang: Lang): Promise<void>;
   getPageSize(): number;
   openAsText(line: number): void;
+  /** Line (0-based) the first page should show; returns it once, then undefined. */
+  takeInitialLine?(): number | undefined;
   log: ErrorLog;
 }
 
@@ -62,14 +64,24 @@ export class Session {
           this.page = 0;
           this.filter = {};
           this.matches = null;
-          this.post({
-            type: 'init',
-            lang: this.b.getLanguage(),
-            strings: table(this.b.getLanguage()),
-            pageSize: this.pageSize(),
-            docVersion: this.b.doc.version,
-          });
-          await this.sendPage(0, {});
+          {
+            // A line waiting for this view (set while it was hidden or not open yet) beats the restored page.
+            const initial = this.b.takeInitialLine?.();
+            const jump = initial !== undefined && this.resolveLine(initial) !== null;
+            this.post({
+              type: 'init',
+              lang: this.b.getLanguage(),
+              strings: table(this.b.getLanguage()),
+              pageSize: this.pageSize(),
+              docVersion: this.b.doc.version,
+              ...(jump ? { jump: true } : {}),
+            });
+            if (jump) await this.sendPage(0, {}, initial);
+            else await this.sendPage(0, {});
+          }
+          return;
+        case 'requestLine':
+          await this.sendPage(0, msg.filter ?? {}, msg.line);
           return;
         case 'requestPage':
           await this.sendPage(msg.page, msg.filter ?? {});
@@ -88,6 +100,12 @@ export class Session {
     } catch (e) {
       this.fail('INTERNAL', e);
     }
+  }
+
+  /** Show the page of `line` (0-based) under the filter that is active now. */
+  goToLine(line: number): void {
+    if (this.disposed) return;
+    void this.sendPage(this.page, this.filter, line).catch((e) => this.fail('INTERNAL', e));
   }
 
   /** The configured language changed (menu in the webview or VS Code settings). */
@@ -156,7 +174,27 @@ export class Session {
     return { line, lineHash: lineHash(text), view };
   }
 
-  private async sendPage(page: number, filter: Filter): Promise<void> {
+  /** `line` itself when it has content, else the next line that has; null when there is none. */
+  private resolveLine(line: number): number | null {
+    if (!Number.isInteger(line) || line < 0) return null;
+    for (let l = line; l < this.lineCount(); l++) if (this.pageLine(l) !== null) return l;
+    return null;
+  }
+
+  private notice(messageKey: string, args: Array<string | number>, line?: number): void {
+    this.post({ type: 'toolError', code: 'LINE_NOTICE', messageKey, args, ...(line === undefined ? {} : { line }) });
+  }
+
+  private async sendPage(page: number, filter: Filter, focusLine?: number): Promise<void> {
+    let target: number | null = null;
+    if (focusLine !== undefined) {
+      target = this.resolveLine(focusLine);
+      if (target === null) {
+        // Nothing to show at or after that line. The page and the filter stay as they are.
+        this.notice('msg.lineOutOfRange', [Number.isFinite(focusLine) ? focusLine + 1 : String(focusLine), this.lineCount()]);
+        return;
+      }
+    }
     const key = filterKey(filter);
     this.filter = filter;
     if (isEmptyFilter(filter)) {
@@ -167,6 +205,15 @@ export class Session {
       this.restartScan();
       const done = await this.runScan();
       if (!done) return; // cancelled by a newer request
+    }
+    if (target !== null) {
+      const index = this.matches ? this.matches.indexOf(target) : target;
+      if (index < 0) {
+        // The filter hides that line. Do not clear the filter behind the user's back.
+        this.notice('msg.lineNotInFilter', [target + 1], target);
+        return;
+      }
+      page = Math.floor(index / this.pageSize());
     }
     this.page = Math.min(Math.max(0, Math.floor(page) || 0), this.totalPages() - 1);
     const lines: PageLine[] = [];
@@ -181,6 +228,7 @@ export class Session {
       totalPages: this.totalPages(),
       matchCount: this.totalMatches(),
       lines,
+      ...(target === null ? {} : { focusLine: target }),
     });
     if (this.stats) this.postStats();
     else void this.refreshStats().catch((e) => this.fail('INTERNAL', e));

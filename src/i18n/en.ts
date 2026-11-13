@@ -19,6 +19,8 @@ export const en = {
   'label.next': 'Next',
   'label.page': 'Page {0} / {1}',
   'label.matches': '{0} matching lines',
+  'label.gotoLine': 'Go to line',
+  'label.gotoLinePlaceholder': 'Go to line…',
   // cards
   'label.line': 'Line {0}',
   'label.messageCount': '{0} messages',
@@ -57,6 +59,9 @@ export const en = {
   'msg.truncated': 'Only the first {0} characters are shown.',
   'msg.editHint': 'Press Ctrl+Enter to apply or Esc to cancel.',
   'msg.argsInvalid': 'The arguments are not valid JSON.',
+  'msg.lineNotNumber': 'Enter a line number of 1 or more.',
+  'msg.lineOutOfRange': 'Line {0} does not exist. This file has {1} lines.',
+  'msg.lineNotInFilter': 'Line {0} is not in the filtered results. Clear the filter to see it.',
   'msg.readOnlyPart': 'This part cannot be edited here.',
   // data problems
   'data.invalidJson': 'Line {0} is not valid JSON (column {1}).',

@@ -18,6 +18,8 @@ export interface PageLine {
 export type WebviewToHost =
   | { type: 'ready' }
   | { type: 'requestPage'; page: number; filter: Filter }
+  /** Show the page that holds `line` (0-based) and focus its card. */
+  | { type: 'requestLine'; line: number; filter: Filter }
   | {
       type: 'edit';
       line: number;
@@ -32,7 +34,7 @@ export type WebviewToHost =
 
 // host -> webview
 export type HostToWebview =
-  | { type: 'init'; lang: Lang; strings: Record<string, string>; pageSize: number; docVersion: number }
+  | { type: 'init'; lang: Lang; strings: Record<string, string>; pageSize: number; docVersion: number; jump?: boolean }
   | {
       type: 'page';
       docVersion: number;
@@ -40,6 +42,8 @@ export type HostToWebview =
       totalPages: number;
       matchCount: number;
       lines: PageLine[];
+      /** 0-based line whose card should be scrolled to and highlighted. */
+      focusLine?: number;
     }
   | { type: 'linesUpdated'; docVersion: number; lines: PageLine[] }
   | { type: 'stats'; docVersion: number; stats: Stats; matchCount: number; totalPages: number }
