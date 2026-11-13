@@ -74,6 +74,7 @@ export interface StubState {
   configListeners: Array<(e: Any) => void>;
   docs: FakeDoc[];
   fileSize: number;
+  activeEditor?: { document: Any; selection: { active: { line: number } } };
 }
 
 function createStub(state: StubState): Any {
@@ -143,7 +144,9 @@ function createStub(state: StubState): Any {
       showTextDocument: async (_doc: Any, opts: Any) => {
         state.shownDocuments.push({ viewColumn: opts?.viewColumn, selection: opts?.selection });
       },
-      activeTextEditor: undefined,
+      get activeTextEditor() {
+        return state.activeEditor;
+      },
     },
     commands: {
       registerCommand: (id: string, fn: (...a: Any[]) => Any) => {
@@ -158,8 +161,14 @@ function createStub(state: StubState): Any {
 export interface Harness {
   state: StubState;
   doc: FakeDoc;
-  window: DOMWindow;
-  document: Document;
+  readonly window: DOMWindow;
+  readonly document: Document;
+  /** How many times the host asked VS Code to bring the chat view to the front. */
+  readonly revealCalls: number;
+  /** Hide the chat view (its page is destroyed and host messages are dropped). */
+  hide(): void;
+  /** Show it again: the page starts over and restores its saved page and filters. */
+  show(): void;
   /** Messages the webview posted to the host. */
   toHost: Any[];
   /** Messages the host posted to the webview. */
@@ -179,6 +188,8 @@ export interface OpenOptions {
   language?: string;
   config?: Record<string, unknown>;
   fileName?: string;
+  /** Run "Open as Chat" from a text editor with the cursor on this 0-based line before the view starts. */
+  cursorLine?: number;
 }
 
 let current: Any = null;
@@ -236,6 +247,11 @@ export async function openChat(text: string, opts: OpenOptions = {}): Promise<Ha
   activateExtension(state);
   const doc = new FakeDoc(text, opts.fileName);
   state.docs.push(doc);
+  if (opts.cursorLine !== undefined) {
+    state.activeEditor = { document: doc, selection: { active: { line: opts.cursorLine } } };
+    await state.commands.get("chatlines.openAsChat")!();
+    state.activeEditor = undefined;
+  }
   const provider = state.providers[0].provider;
 
   const toHost: Any[] = [];
@@ -244,7 +260,13 @@ export async function openChat(text: string, opts: OpenOptions = {}): Promise<Ha
   let win: DOMWindow | null = null;
   let disposeCb: (() => void) | null = null;
 
+  let revealCalls = 0;
+  let lateDelivery = false;
   const panel = {
+    visible: true,
+    reveal: () => {
+      revealCalls++;
+    },
     webview: {
       options: {} as Any,
       html: '',
@@ -255,9 +277,15 @@ export async function openChat(text: string, opts: OpenOptions = {}): Promise<Ha
         return { dispose() {} };
       },
       postMessage: async (msg: Any) => {
+        if (!panel.visible) return false; // hidden view: VS Code drops the message
         const clone = JSON.parse(JSON.stringify(msg));
         fromHost.push(clone);
-        if (win) win.dispatchEvent(new win.MessageEvent('message', { data: clone }));
+        const target = win;
+        if (!target) return true;
+        const deliver = (): boolean => target.dispatchEvent(new target.MessageEvent('message', { data: clone }));
+        // After show() the page gets messages a moment later, like in VS Code (the default stays synchronous).
+        if (lateDelivery) setTimeout(deliver, 0);
+        else deliver();
         return true;
       },
     },
@@ -268,14 +296,14 @@ export async function openChat(text: string, opts: OpenOptions = {}): Promise<Ha
   };
   await provider.resolveCustomTextEditor(doc, panel, {});
 
-  const dom = new JSDOM(panel.webview.html, {
-    runScripts: 'outside-only',
-    pretendToBeVisual: true,
-  });
-  win = dom.window;
-  (win as Any).acquireVsCodeApi = () => {
-    let saved: unknown = null;
-    return {
+  let saved: unknown = null; // what the page keeps with setState; survives a hide and show
+  const startPage = (): void => {
+    const dom = new JSDOM(panel.webview.html, {
+      runScripts: 'outside-only',
+      pretendToBeVisual: true,
+    });
+    win = dom.window;
+    (win as Any).acquireVsCodeApi = () => ({
       postMessage: (m: Any) => {
         const clone = JSON.parse(JSON.stringify(m));
         toHost.push(clone);
@@ -285,9 +313,10 @@ export async function openChat(text: string, opts: OpenOptions = {}): Promise<Ha
       setState: (s: unknown) => {
         saved = s;
       },
-    };
+    });
+    win.eval(WEBVIEW_JS());
   };
-  win.eval(WEBVIEW_JS());
+  startPage();
 
   const settle = (ms = 20) => new Promise<void>((r) => setTimeout(r, ms));
   const waitFor = async (fn: () => boolean, ms = 30000): Promise<void> => {
@@ -301,8 +330,24 @@ export async function openChat(text: string, opts: OpenOptions = {}): Promise<Ha
   return {
     state,
     doc,
-    window: win,
-    document: win.document,
+    get window() {
+      return win as DOMWindow;
+    },
+    get document() {
+      return (win as DOMWindow).document;
+    },
+    get revealCalls() {
+      return revealCalls;
+    },
+    hide: () => {
+      panel.visible = false;
+      win?.close(); // without retainContextWhenHidden the page is destroyed
+    },
+    show: () => {
+      panel.visible = true;
+      lateDelivery = true;
+      startPage(); // the page starts again, with the state it saved before
+    },
     toHost,
     fromHost,
     panelHtml: panel.webview.html,
