@@ -6,7 +6,7 @@ Read chat-format JSONL as conversations in VS Code, and fix one message without 
 
 ![The chat view shows one JSONL line as role bubbles with a tool call paired to its result](docs/images/01-chat-view.png)
 
-*The chat view (preview harness screen, without the VS Code window frame): one JSONL line becomes role bubbles. The tool call and its result share a color band.*
+*The chat view (preview harness screen, without the VS Code window frame): one JSONL line becomes role bubbles. The tool call and its result share a color band. The toolbar above the bubbles includes the line-number box ("Go to line").*
 
 ## Why
 
@@ -24,6 +24,7 @@ It runs offline. It does not send your data anywhere and needs no API key.
 - Edits one message (or one tool call's arguments) at a time; undo works with Ctrl+Z (Cmd+Z on macOS).
 - Filters by role, tool name, text and "problems only"; shows statistics; pages through large files (50 lines per page by default).
 - Reports data problems on the card (invalid JSON, unknown shape, unmatched tool call IDs, bad arguments, batch errors).
+- Jumps to a line number from the toolbar, and opens the chat view at the cursor line when you run "Open as Chat" from a text editor.
 - English and Korean screens.
 
 ## Install
@@ -37,7 +38,7 @@ git clone https://github.com/LeeGyeongPil/chatlines.git
 cd chatlines
 npm ci
 npm run package
-code --install-extension chatlines-0.1.2.vsix
+code --install-extension chatlines-0.2.0.vsix
 ```
 
 npm 11 may print "install-scripts not yet covered by allowScripts" warnings for `esbuild` and `@vscode/vsce-sign` during `npm ci`. They can be ignored; the build and packaging do not need those scripts.
@@ -45,7 +46,7 @@ npm 11 may print "install-scripts not yet covered by allowScripts" warnings for 
 `npm run package` ends with:
 
 ```
- DONE  Packaged: .../chatlines-0.1.2.vsix
+ DONE  Packaged: .../chatlines-0.2.0.vsix
 ```
 
 If the `code` command is missing, use "Extensions: Install from VSIX..." in the VS Code command palette.
@@ -82,8 +83,11 @@ In VS Code, with the extension installed:
 | Problems only | Keep only lines with data problems |
 | Statistics | Lines, lines per format, messages per role, tool calls, problem lines |
 | Previous / Next | Page through the file |
+| Go to line | Type a line number (1-based) and press Enter to open its page and highlight the card. A line that does not exist or is hidden by the filter shows a notice; the filter is kept |
 | Open as Text | Jump to that line in the plain text editor |
 | Language menu | English or Korean, saved to the `chatlines.language` setting |
+
+In a text editor, run "Open as Chat" from the Command Palette (the cursor line is used), and the chat view opens at the page of the cursor line (the card is highlighted). The explorer and editor title menus still open the first page.
 
 Filters and statistics scan the whole file in chunks and restart if the document changes.
 
@@ -190,7 +194,7 @@ Other tools may fit better in other cases (we do not compare features here, sinc
 
 ```bash
 npm ci
-npm test              # build + 80 tests (VS Code API stand-in + jsdom)
+npm test              # build + 106 tests (VS Code API stand-in + jsdom)
 npm run bench         # 10,000-line synthetic file
 npm run preview       # browser harness
 npm run test:integration   # real extension host; downloads a VS Code build on first run

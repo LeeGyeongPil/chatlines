@@ -6,7 +6,7 @@
 
 ![채팅 보기: JSONL 한 줄이 역할별 말풍선과 짝지어진 도구 호출로 보입니다](docs/images/01-chat-view.ko.png)
 
-*채팅 보기(VS Code 창 장식이 없는 미리보기 하네스 화면): JSONL 한 줄이 역할별 말풍선이 됩니다. 도구 호출과 그 응답은 같은 색 띠로 묶입니다.*
+*채팅 보기(VS Code 창 장식이 없는 미리보기 하네스 화면): JSONL 한 줄이 역할별 말풍선이 됩니다. 도구 호출과 그 응답은 같은 색 띠로 묶입니다. 말풍선 위 툴바에 줄 번호 입력칸("줄로 이동")이 있습니다.*
 
 ## 왜 필요한가
 
@@ -24,6 +24,7 @@ chatlines는 같은 파일을 카드 목록으로 엽니다. 카드마다 메시
 - 메시지 하나(또는 도구 호출 인자 하나)씩 편집합니다. Ctrl+Z(macOS는 Cmd+Z)로 되돌릴 수 있습니다.
 - 역할·도구 이름·본문·"문제 줄만 보기"로 거르고, 통계를 보여 주며, 큰 파일은 쪽으로 나눠 보여 줍니다(기본 50줄).
 - 데이터 문제(잘못된 JSON, 알 수 없는 형태, 짝 없는 도구 호출 ID, 잘못된 인자, 배치 오류)를 카드에 표시합니다.
+- 툴바에서 줄 번호로 이동하고, 텍스트 편집기에서 "Open as Chat"을 실행하면 커서 줄에서 채팅 보기를 엽니다.
 - 영어·한국어 화면을 지원합니다.
 
 ## 설치
@@ -37,7 +38,7 @@ git clone https://github.com/LeeGyeongPil/chatlines.git
 cd chatlines
 npm ci
 npm run package
-code --install-extension chatlines-0.1.2.vsix
+code --install-extension chatlines-0.2.0.vsix
 ```
 
 npm 11에서는 `npm ci` 중 `esbuild`, `@vscode/vsce-sign`에 대해 "install-scripts not yet covered by allowScripts" 경고가 나올 수 있습니다. 무시해도 됩니다. 빌드와 패키징에 그 스크립트는 필요하지 않습니다.
@@ -45,7 +46,7 @@ npm 11에서는 `npm ci` 중 `esbuild`, `@vscode/vsce-sign`에 대해 "install-s
 `npm run package`의 마지막 줄은 다음과 같습니다.
 
 ```
- DONE  Packaged: .../chatlines-0.1.2.vsix
+ DONE  Packaged: .../chatlines-0.2.0.vsix
 ```
 
 `code` 명령이 없으면 VS Code 명령 팔레트의 "Extensions: Install from VSIX..."를 쓰세요.
@@ -82,8 +83,11 @@ npm run preview
 | 문제 줄만 보기 | 데이터 문제가 있는 줄만 남깁니다 |
 | 통계 | 줄 수, 형식별 줄 수, 역할별 메시지 수, 도구 호출 수, 문제 줄 |
 | 이전 / 다음 | 파일을 쪽 단위로 넘깁니다 |
+| 줄로 이동 | 줄 번호(1부터)를 입력하고 Enter를 누르면 그 줄이 있는 쪽을 열고 카드를 강조합니다. 없는 줄이거나 필터에 가려진 줄이면 안내만 보여 주고 필터는 그대로 둡니다 |
 | 텍스트로 열기 | 그 줄 위치에서 일반 텍스트 편집기로 넘어갑니다 |
 | 언어 메뉴 | English 또는 한국어, `chatlines.language` 설정에 저장됩니다 |
+
+텍스트 편집기에서 명령 팔레트로 "Open as Chat"을 실행하면(커서 줄 기준) 커서 줄이 있는 쪽에서 채팅 보기가 열립니다(카드가 강조됩니다). 탐색기·편집기 제목 메뉴로 열면 지금처럼 첫 쪽이 열립니다.
 
 필터와 통계는 파일 전체를 조각으로 나눠 훑고, 문서가 바뀌면 다시 시작합니다.
 
@@ -190,7 +194,7 @@ npm run --silent demo:edit -- examples/ko/python-style.jsonl --line 2 --message 
 
 ```bash
 npm ci
-npm test              # 빌드 + 테스트 80개 (VS Code API 대역 + jsdom)
+npm test              # 빌드 + 테스트 106개 (VS Code API 대역 + jsdom)
 npm run bench         # 1만 줄 합성 파일
 npm run preview       # 브라우저 하네스
 npm run test:integration   # 실제 확장 호스트, 첫 실행 때 VS Code 빌드를 내려받음

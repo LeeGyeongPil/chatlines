@@ -5,6 +5,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-14
+
+### Added
+- "Go to line" box in the toolbar: type a 1-based line number and press Enter to open the page that holds it and highlight its card. A line that does not exist, or that the current filter hides, shows a notice and leaves the page and filter unchanged.
+- "Open as Chat" run from a text editor now opens the chat view at the page of the cursor line. The explorer and editor title menus still open the first page.
+
+### Known issues
+- When "Open as Chat" is run on a cursor line while the chat view is hidden, a saved filter is cleared without a notice.
+
 ## [0.1.2] - 2026-11-12
 
 ### Fixed
