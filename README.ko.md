@@ -31,14 +31,28 @@ chatlines는 같은 파일을 카드 목록으로 엽니다. 카드마다 메시
 
 VS Code 1.90 이상이 필요합니다.
 
-아직 Marketplace에는 올라가 있지 않습니다. 소스에서 `.vsix` 패키지를 만듭니다(Node.js 22 이상 필요, `brew install node` 또는 <https://nodejs.org>에서 설치).
+아직 Marketplace에는 올라가 있지 않습니다.
+
+### GitHub Releases에서 설치
+
+[최신 릴리스](https://github.com/LeeGyeongPil/chatlines/releases/latest) 페이지에서 `chatlines-<버전>.vsix`를 내려받아 설치합니다.
+
+```bash
+code --install-extension chatlines-<버전>.vsix
+```
+
+`code` 명령이 없으면 VS Code 명령 팔레트의 "Extensions: Install from VSIX..."를 쓰세요. 릴리스에는 `v*` 태그를 올릴 때 파일이 첨부됩니다. 최신 릴리스에 `.vsix`가 아직 없으면 아래 소스 빌드를 쓰세요.
+
+### 소스에서 빌드
+
+`.vsix` 패키지를 직접 만듭니다(Node.js 22 이상 필요, `brew install node` 또는 <https://nodejs.org>에서 설치).
 
 ```bash
 git clone https://github.com/LeeGyeongPil/chatlines.git
 cd chatlines
 npm ci
 npm run package
-code --install-extension chatlines-0.2.0.vsix
+code --install-extension chatlines-0.2.1.vsix
 ```
 
 npm 11에서는 `npm ci` 중 `esbuild`, `@vscode/vsce-sign`에 대해 "install-scripts not yet covered by allowScripts" 경고가 나올 수 있습니다. 무시해도 됩니다. 빌드와 패키징에 그 스크립트는 필요하지 않습니다.
@@ -46,7 +60,7 @@ npm 11에서는 `npm ci` 중 `esbuild`, `@vscode/vsce-sign`에 대해 "install-s
 `npm run package`의 마지막 줄은 다음과 같습니다.
 
 ```
- DONE  Packaged: .../chatlines-0.2.0.vsix
+ DONE  Packaged: .../chatlines-0.2.1.vsix
 ```
 
 `code` 명령이 없으면 VS Code 명령 팔레트의 "Extensions: Install from VSIX..."를 쓰세요.

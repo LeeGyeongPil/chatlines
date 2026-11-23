@@ -31,14 +31,28 @@ It runs offline. It does not send your data anywhere and needs no API key.
 
 Requires VS Code 1.90 or newer.
 
-There is no Marketplace listing yet. Build the `.vsix` package from source (Node.js 22 or newer; install it with `brew install node` or from <https://nodejs.org>):
+There is no Marketplace listing yet.
+
+### From GitHub Releases
+
+Download `chatlines-<version>.vsix` from the [latest release](https://github.com/LeeGyeongPil/chatlines/releases/latest) page, then install it:
+
+```bash
+code --install-extension chatlines-<version>.vsix
+```
+
+If the `code` command is missing, use "Extensions: Install from VSIX..." in the VS Code command palette. Releases are attached when a `v*` tag is published; if the latest release has no `.vsix` yet, build from source below.
+
+### Build from source
+
+Build the `.vsix` package yourself (Node.js 22 or newer; install it with `brew install node` or from <https://nodejs.org>):
 
 ```bash
 git clone https://github.com/LeeGyeongPil/chatlines.git
 cd chatlines
 npm ci
 npm run package
-code --install-extension chatlines-0.2.0.vsix
+code --install-extension chatlines-0.2.1.vsix
 ```
 
 npm 11 may print "install-scripts not yet covered by allowScripts" warnings for `esbuild` and `@vscode/vsce-sign` during `npm ci`. They can be ignored; the build and packaging do not need those scripts.
@@ -46,7 +60,7 @@ npm 11 may print "install-scripts not yet covered by allowScripts" warnings for 
 `npm run package` ends with:
 
 ```
- DONE  Packaged: .../chatlines-0.2.0.vsix
+ DONE  Packaged: .../chatlines-0.2.1.vsix
 ```
 
 If the `code` command is missing, use "Extensions: Install from VSIX..." in the VS Code command palette.
