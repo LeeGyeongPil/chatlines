@@ -52,7 +52,7 @@ git clone https://github.com/LeeGyeongPil/chatlines.git
 cd chatlines
 npm ci
 npm run package
-code --install-extension chatlines-0.2.1.vsix
+code --install-extension chatlines-0.3.0.vsix
 ```
 
 npm 11 may print "install-scripts not yet covered by allowScripts" warnings for `esbuild` and `@vscode/vsce-sign` during `npm ci`. They can be ignored; the build and packaging do not need those scripts.
@@ -60,7 +60,7 @@ npm 11 may print "install-scripts not yet covered by allowScripts" warnings for 
 `npm run package` ends with:
 
 ```
- DONE  Packaged: .../chatlines-0.2.1.vsix
+ DONE  Packaged: .../chatlines-0.3.0.vsix
 ```
 
 If the `code` command is missing, use "Extensions: Install from VSIX..." in the VS Code command palette.
