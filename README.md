@@ -120,8 +120,8 @@ Filters and statistics scan the whole file in chunks and restart if the document
 | OpenAI chat | `{"messages":[{"role","content"}], "tools":[...]}` (content as string, null or parts; `tool_calls`; `tool_call_id`; `weight`) | message text, text parts, tool call arguments |
 | ShareGPT | `{"conversations":[{"from","value"}]}` | `value` |
 | Alpaca | `{"instruction","input","output"}` | the three fields |
-| Batch request | `{"custom_id","method","url","body":{"messages":[...]}}` | message text |
-| Batch response | `{"id","custom_id","response":{"status_code","body":{"choices":[{"message"}]}},"error"}` | `choices[].message.content` |
+| Batch request | `{"custom_id","method","url","body":{"messages":[...]}}` or `body.input` (`/v1/responses`) | message text, `input` string |
+| Batch response | `{"id","custom_id","response":{"status_code","body":{"choices":[{"message"}]}},"error"}` | `choices[].message.content`, `response.body.output[].content[].text` (`output_text`) |
 
 Values that are not strings (for example `content: null`) are not editable in this version. ShareGPT `function_call` values appear as assistant text, not as tool call cards.
 
@@ -191,7 +191,7 @@ Other tools may fit better in other cases (we do not compare features here, sinc
 - VS Code does not share files larger than 50 MB with extensions; chatlines shows a message and you can open the file as text or split it.
 - You cannot add or delete messages or lines in this version, only edit existing strings.
 - Tool calls whose arguments are not valid JSON are read-only.
-- `/v1/responses` style batch output is not supported yet.
+- Responses items that are not messages (reasoning, function_call and similar) are shown read-only.
 - Only VS Code is targeted; forks such as Cursor are untested.
 
 ## Troubleshooting
@@ -208,7 +208,7 @@ Other tools may fit better in other cases (we do not compare features here, sinc
 
 ```bash
 npm ci
-npm test              # build + 106 tests (VS Code API stand-in + jsdom)
+npm test              # build + 116 tests (VS Code API stand-in + jsdom)
 npm run bench         # 10,000-line synthetic file
 npm run preview       # browser harness
 npm run test:integration   # real extension host; downloads a VS Code build on first run

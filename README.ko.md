@@ -120,8 +120,8 @@ npm run preview
 | OpenAI 채팅 | `{"messages":[{"role","content"}], "tools":[...]}` (content는 문자열·null·파츠 배열, `tool_calls`, `tool_call_id`, `weight`) | 메시지 본문, 텍스트 파츠, 도구 호출 인자 |
 | ShareGPT | `{"conversations":[{"from","value"}]}` | `value` |
 | Alpaca | `{"instruction","input","output"}` | 세 필드 |
-| 배치 요청 | `{"custom_id","method","url","body":{"messages":[...]}}` | 메시지 본문 |
-| 배치 응답 | `{"id","custom_id","response":{"status_code","body":{"choices":[{"message"}]}},"error"}` | `choices[].message.content` |
+| 배치 요청 | `{"custom_id","method","url","body":{"messages":[...]}}` 또는 `body.input`(`/v1/responses`) | 메시지 본문, `input` 문자열 |
+| 배치 응답 | `{"id","custom_id","response":{"status_code","body":{"choices":[{"message"}]}},"error"}` | `choices[].message.content`, `response.body.output[].content[].text`(`output_text`) |
 
 문자열이 아닌 값(예: `content: null`)은 이번 버전에서 편집하지 않습니다. ShareGPT의 `function_call` 값은 도구 호출 카드가 아니라 어시스턴트 본문으로 보입니다.
 
@@ -191,7 +191,7 @@ npm run --silent demo:edit -- examples/ko/python-style.jsonl --line 2 --message 
 - VS Code는 50MB보다 큰 파일을 확장에 공유하지 않습니다. chatlines는 안내 문구를 보여 주며, 파일을 텍스트로 열거나 나눠야 합니다.
 - 이번 버전에서는 메시지나 줄을 추가·삭제할 수 없고 기존 문자열만 고칠 수 있습니다.
 - 인자가 올바른 JSON이 아닌 도구 호출은 읽기 전용입니다.
-- `/v1/responses` 형태의 배치 출력은 아직 지원하지 않습니다.
+- Responses의 메시지가 아닌 항목(reasoning, function_call 등)은 읽기 전용으로 표시됩니다.
 - VS Code만 대상으로 합니다. Cursor 같은 포크는 확인하지 않았습니다.
 
 ## 문제 해결
@@ -208,7 +208,7 @@ npm run --silent demo:edit -- examples/ko/python-style.jsonl --line 2 --message 
 
 ```bash
 npm ci
-npm test              # 빌드 + 테스트 106개 (VS Code API 대역 + jsdom)
+npm test              # 빌드 + 테스트 116개 (VS Code API 대역 + jsdom)
 npm run bench         # 1만 줄 합성 파일
 npm run preview       # 브라우저 하네스
 npm run test:integration   # 실제 확장 호스트, 첫 실행 때 VS Code 빌드를 내려받음
