@@ -9,8 +9,8 @@ const EXPECTED: Record<string, FormatId[]> = {
   'openai-tools': ['openai-chat', 'openai-chat', 'openai-chat'],
   sharegpt: ['sharegpt', 'sharegpt'],
   alpaca: ['alpaca', 'alpaca', 'alpaca'],
-  'batch-request': ['batch-request', 'batch-request'],
-  'batch-response': ['batch-response', 'batch-response'],
+  'batch-request': ['batch-request', 'batch-request', 'batch-request'],
+  'batch-response': ['batch-response', 'batch-response', 'batch-response'],
   'python-style': ['openai-chat', 'openai-chat', 'openai-chat'],
   'mixed-problems': ['openai-chat', 'invalid', 'unknown', 'openai-chat', 'batch-response', 'openai-chat'],
 };

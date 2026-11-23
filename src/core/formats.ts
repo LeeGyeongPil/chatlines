@@ -200,6 +200,42 @@ function openaiMessage(m: Obj, index: number, base: Path): MessageView {
   };
 }
 
+/** A Responses API item that is not a chat message: shown read-only as raw JSON. */
+function otherItemMessage(item: unknown, index: number): MessageView {
+  const type = isObj(item) && typeof item.type === 'string' ? item.type : '';
+  return {
+    index,
+    role: 'other',
+    rawRole: type,
+    parts: [{ kind: 'other', text: JSON.stringify(item), path: null }],
+    toolCalls: [],
+    toolCallId: null,
+    color: 0,
+    name: null,
+    weight: null,
+  };
+}
+
+/** Responses API request `body.input`: a string (one user turn) or an array of items. */
+function responsesInput(input: unknown): MessageView[] | null {
+  if (typeof input === 'string') {
+    return [simpleMessage(0, 'user', '', input, ['body', 'input'])];
+  }
+  if (!Array.isArray(input)) return null;
+  return input.map((item, i) =>
+    isObj(item) && typeof item.role === 'string' ? openaiMessage(item, i, ['body', 'input', i]) : otherItemMessage(item, i),
+  );
+}
+
+/** Responses API response `body.output`: message items become assistant bubbles, the rest is read-only. */
+function responsesOutput(output: unknown[], base: Path): MessageView[] {
+  return output.map((item, i) =>
+    isObj(item) && item.type === 'message'
+      ? { ...openaiMessage(item, i, [...base, i]), role: 'assistant' as RoleClass, rawRole: typeof item.role === 'string' ? item.role : 'assistant' }
+      : otherItemMessage(item, i),
+  );
+}
+
 function toolNamesOf(tools: unknown): string[] {
   const out: string[] = [];
   if (!Array.isArray(tools)) return out;
@@ -325,6 +361,7 @@ export function toConversation(v: unknown): LineView {
     meta.url = typeof v.url === 'string' ? v.url : null;
     meta.model = typeof body.model === 'string' ? body.model : null;
     if (Array.isArray(body.messages)) messages = messagesFrom(body.messages, ['body', 'messages']);
+    else if (body.input !== undefined) messages = responsesInput(body.input);
     tools = toolNamesOf(body.tools);
   } else {
     // batch-response
@@ -340,6 +377,9 @@ export function toConversation(v: unknown): LineView {
           list.push(openaiMessage(c.message, list.length, ['response', 'body', 'choices', i, 'message']));
         }
       });
+    }
+    if (body && !Array.isArray(body.choices) && Array.isArray(body.output)) {
+      list.push(...responsesOutput(body.output, ['response', 'body', 'output']));
     }
     messages = list;
     const errored = (v.error !== null && v.error !== undefined) || (meta.statusCode !== null && meta.statusCode >= 400);
