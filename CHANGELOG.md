@@ -5,6 +5,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-24
+
+### Added
+- Batch lines for the OpenAI Responses API (`/v1/responses`): `body.input` (string or item array) and `response.body.output` (`output_text` is editable, other items are shown read-only) now open as chat bubbles instead of an "unknown shape" card or an empty card.
+
 ## [0.2.1] - 2026-11-24
 
 ### Changed
